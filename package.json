@@ -1,0 +1,22 @@
+{
+  "name": "three-body-orbital-simulator",
+  "version": "2.0.0",
+  "description": "Interactive 3D three-body problem simulator with 25 numerically verified periodic-orbit presets and live conservation telemetry.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "verify": "node verify-presets.mjs",
+    "dev": "npx --yes serve .",
+    "start": "npx --yes serve ."
+  },
+  "keywords": [
+    "three-body-problem",
+    "n-body",
+    "orbital-mechanics",
+    "physics-simulation",
+    "three.js",
+    "choreographies",
+    "figure-8"
+  ]
+}
