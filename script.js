@@ -9,7 +9,7 @@ const TRAIL_LENGTH = 1500;
 const TRAIL_DT = 0.005;
 const MAX_STEPS_PER_FRAME = 4000;
 
-const COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1'];
+const COLORS = ['#c8795e', '#7fa8b5', '#c98b86'];
 
 const C = (hex) => new THREE.Color(hex);
 
@@ -31,7 +31,7 @@ let simTime = 0;
 let lastTrailTime = 0;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0a0a1a);
+scene.background = new THREE.Color(0x0b0b0c);
 
 const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
 camera.position.set(3, 1.5, 4);
@@ -40,15 +40,15 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
+renderer.toneMappingExposure = 1.0;
 document.getElementById('container').appendChild(renderer.domElement);
 
-const ambient = new THREE.AmbientLight(0x404060, 0.4);
+const ambient = new THREE.AmbientLight(0x3a3b40, 0.5);
 scene.add(ambient);
-const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+const dirLight = new THREE.DirectionalLight(0xfff6e8, 1.6);
 dirLight.position.set(5, 10, 7);
 scene.add(dirLight);
-const dirLight2 = new THREE.DirectionalLight(0x8888ff, 0.5);
+const dirLight2 = new THREE.DirectionalLight(0x93a7c4, 0.35);
 dirLight2.position.set(-5, -3, -5);
 scene.add(dirLight2);
 
@@ -60,12 +60,12 @@ controls.maxDistance = 30;
 controls.target.set(0, 0, 0);
 
 const starsGeo = new THREE.BufferGeometry();
-const starCount = 3000;
+const starCount = 1100;
 const starPos = new Float32Array(starCount * 3);
-for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 300;
+for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 220;
 starsGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
 scene.add(new THREE.Points(starsGeo, new THREE.PointsMaterial({
-  color: 0xffffff, size: 0.08, transparent: true, opacity: 0.6,
+  color: 0xd8d2c4, size: 0.055, transparent: true, opacity: 0.32,
 })));
 
 function createGlowTexture() {
@@ -115,8 +115,8 @@ function loadPreset(key) {
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(size, 32, 32),
       new THREE.MeshStandardMaterial({
-        color: col, emissive: col, emissiveIntensity: 0.4,
-        roughness: 0.2, metalness: 0.3,
+        color: col, emissive: col, emissiveIntensity: 0.3,
+        roughness: 0.45, metalness: 0.1,
       })
     );
     sphere.position.set(body.x, body.y, body.z);
@@ -124,10 +124,10 @@ function loadPreset(key) {
     meshes.push(sphere);
 
     const glow = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: glowTexture, color: col, transparent: true, opacity: 0.3,
+      map: glowTexture, color: col, transparent: true, opacity: 0.22,
       blending: THREE.AdditiveBlending, depthWrite: false,
     }));
-    glow.scale.set(1.5, 1.5, 1);
+    glow.scale.set(1.35, 1.35, 1);
     glow.position.set(body.x, body.y, body.z);
     scene.add(glow);
     glows.push(glow);
@@ -144,7 +144,7 @@ function loadPreset(key) {
     trailGeo.setAttribute('position', attr);
     trailGeo.setDrawRange(0, 0);
     const trail = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({
-      color: col, transparent: true, opacity: 0.35,
+      color: col, transparent: true, opacity: 0.5,
     }));
     scene.add(trail);
     trails.push(trail);
@@ -240,7 +240,10 @@ document.getElementById('presetSelect').addEventListener('change', (e) => {
 });
 document.getElementById('pauseBtn').addEventListener('click', () => {
   running = !running;
-  document.getElementById('pauseBtn').textContent = running ? '⏸' : '▶';
+  const btn = document.getElementById('pauseBtn');
+  btn.classList.toggle('is-paused', !running);
+  btn.setAttribute('aria-label', running ? 'Pause' : 'Play');
+  btn.title = running ? 'Pause (Space)' : 'Play (Space)';
 });
 document.getElementById('resetBtn').addEventListener('click', resetSimulation);
 document.getElementById('perturbBtn').addEventListener('click', perturb);

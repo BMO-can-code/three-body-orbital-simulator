@@ -85,7 +85,7 @@ Exit code is non-zero if any preset escapes or drifts beyond tolerance — so th
 ```
 index.html            # simulator markup, import-map for Three.js
 learn.html            # Orbits & Theory page (gallery, outcomes, methods)
-style.css             # glassmorphic UI, responsive bottom-sheet, article layout
+style.css             # editorial UI, responsive layout, article typography
 script.js             # Three.js scene, render loop, input, trails, energy HUD
 learn.js              # builds the preset gallery on the theory page
 physics.js            # integrator + conservation laws (shared by site & verifier)

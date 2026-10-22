@@ -22,7 +22,11 @@ for (const group of GROUP_ORDER) {
     desc.className = 'orbit-desc';
     desc.textContent = p.desc || '';
 
-    item.append(name, desc);
+    const cite = document.createElement('div');
+    cite.className = 'orbit-cite';
+    cite.textContent = p.cite || '';
+
+    item.append(name, desc, cite);
     item.addEventListener('click', () => {
       location.href = 'index.html?preset=' + encodeURIComponent(p.key);
     });

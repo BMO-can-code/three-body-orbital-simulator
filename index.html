@@ -3,57 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Three-Body Problem Simulation</title>
-  <meta name="description" content="An interactive 3D gravitational simulation of the famous three-body problem, built with Three.js. 25 periodic-orbit and classical presets, each numerically verified.">
+  <title>Three-Body Problem · Mayank Brar</title>
+  <meta name="description" content="An interactive three-body simulation with 25 numerically verified periodic orbits, built by Mayank Brar.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0b0c'/%3E%3Ccircle cx='16' cy='16' r='8.5' fill='none' stroke='%23c8795e' stroke-width='1.6'/%3E%3Ccircle cx='24.5' cy='16' r='2.1' fill='%23e9e4d8'/%3E%3C/svg%3E">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Three-Body Problem · Mayank Brar">
+  <meta property="og:description" content="An interactive three-body simulation with 25 numerically verified periodic orbits.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="container"></div>
+
+  <header class="masthead">
+    <div class="masthead-left">
+      <a class="wordmark" href="index.html">Three-Body Problem</a>
+      <p class="byline">A numerical study by <a href="https://github.com/BMO-can-code">Mayank Brar</a></p>
+    </div>
+    <nav class="site-nav" aria-label="Site">
+      <span class="nav-current" aria-current="page">Simulation</span>
+      <a href="learn.html">Orbits &amp; theory</a>
+      <a href="https://github.com/BMO-can-code/three-body-orbital-simulator">GitHub</a>
+    </nav>
+  </header>
+
+  <section id="ui" class="panel" aria-label="Simulation controls">
+    <div class="panel-head">
+      <label class="field-label" for="presetSelect">Orbit</label>
+      <select id="presetSelect"></select>
+    </div>
+
+    <div class="transport">
+      <button id="pauseBtn" class="icon-btn" type="button" aria-label="Pause" title="Pause (Space)">
+        <svg class="icon icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+        <svg class="icon icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+      </button>
+      <button id="resetBtn" class="icon-btn" type="button" aria-label="Reset" title="Reset (R)">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5v5h5"/></svg>
+      </button>
+      <button id="perturbBtn" class="icon-btn" type="button" aria-label="Perturb" title="Perturb (P)">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7h3.4l8 10h4.6"/><path d="M3.5 17h3.4l8-10h4.6"/><path d="M16.5 4.5l3 2.5-3 2.5"/><path d="M16.5 14.5l3 2.5-3 2.5"/></svg>
+      </button>
+
+      <div class="speed">
+        <input type="range" id="speedSlider" min="1" max="100" step="1" value="41" aria-label="Speed">
+        <output id="speedLabel" for="speedSlider">1.0×</output>
+      </div>
+    </div>
+
+    <div class="toggles">
+      <label class="check"><input type="checkbox" id="trailToggle" checked> Trails</label>
+      <label class="check"><input type="checkbox" id="autoRotateToggle"> Auto-orbit</label>
+    </div>
+
+    <div class="readout">
+      <div class="stat">
+        <div class="stat-key">Kinetic</div>
+        <div class="stat-val" id="keValue">0.0000</div>
+      </div>
+      <div class="stat">
+        <div class="stat-key">Potential</div>
+        <div class="stat-val" id="peValue">0.0000</div>
+      </div>
+      <div class="stat">
+        <div class="stat-key">Total</div>
+        <div class="stat-val" id="totalValue">0.0000</div>
+      </div>
+    </div>
+
+    <p class="hints">
+      <kbd>Space</kbd> pause <span class="dot">·</span> <kbd>R</kbd> reset <span class="dot">·</span> <kbd>P</kbd> perturb
+      <span class="hints-sep">/</span> drag to orbit, scroll to zoom
+    </p>
+  </section>
 
   <div id="boot-error" hidden>
     <div class="boot-card">
       <div class="boot-title">Three-Body Problem</div>
       <div class="boot-msg"></div>
     </div>
-  </div>
-
-  <div id="ui">
-    <div class="title">Three-Body Problem <span style="font-size:9px;padding:2px 8px;border:1px solid rgba(255,255,255,.2);border-radius:3px;color:#34d399;text-transform:uppercase;letter-spacing:1px;margin-left:8px">Made by Mayank</span></div>
-
-    <div class="panel-nav">
-      <span class="panel-nav-label">Simulation</span>
-      <a class="panel-link" href="learn.html">Orbits &amp; theory &rarr;</a>
-    </div>
-
-    <div id="tab-simulation" class="tab-content active">
-      <div class="controls">
-        <button id="pauseBtn" title="Play/Pause">⏸</button>
-        <button id="resetBtn" title="Reset">↺</button>
-        <button id="perturbBtn" title="Perturb (nudge to see chaos)">⟳</button>
-
-        <select id="presetSelect"></select>
-
-        <div class="control-group">
-          <label for="speedSlider">Speed</label>
-          <input type="range" id="speedSlider" min="1" max="100" step="1" value="41">
-          <span id="speedLabel">1.0×</span>
-        </div>
-
-        <label class="toggle"><input type="checkbox" id="trailToggle" checked> Trails</label>
-        <label class="toggle"><input type="checkbox" id="autoRotateToggle"> Orbit</label>
-      </div>
-
-      <div class="energy">
-        <span>KE <span id="keValue">0.0000</span></span>
-        <span class="sep">|</span>
-        <span>PE <span id="peValue">0.0000</span></span>
-        <span class="sep">|</span>
-        <span>E <span id="totalValue">0.0000</span></span>
-      </div>
-
-      <div class="info">Drag orbit · Scroll zoom · Space pause · R reset · P perturb</div>
-    </div>
-
   </div>
 
   <script type="importmap">

@@ -9,17 +9,17 @@ function setSizes(bodies) {
 
 function star(p1, p2) {
   return [
-    C(1, 0x67e8f9, -1, 0, 0, p1, p2, 0),
-    C(1, 0xf0abfc, 1, 0, 0, p1, p2, 0),
-    C(1, 0xfcd34d, 0, 0, 0, -2 * p1, -2 * p2, 0),
+    C(1, 0x7fa8b5, -1, 0, 0, p1, p2, 0),
+    C(1, 0xc98b86, 1, 0, 0, p1, p2, 0),
+    C(1, 0xd9b46b, 0, 0, 0, -2 * p1, -2 * p2, 0),
   ];
 }
 
 function trojanBodies(M, m, a) {
   const bodies = [
-    makeBody(M, 0xfcd34d, 0, 0, 0, 0, 0, 0, 0),
-    makeBody(m, 0x67e8f9, 0, a, 0, 0, 0, 0, 0),
-    makeBody(m, 0xf0abfc, 0, a / 2, (a * Math.sqrt(3)) / 2, 0, 0, 0, 0),
+    makeBody(M, 0xd9b46b, 0, 0, 0, 0, 0, 0, 0),
+    makeBody(m, 0x7fa8b5, 0, a, 0, 0, 0, 0, 0),
+    makeBody(m, 0xc98b86, 0, a / 2, (a * Math.sqrt(3)) / 2, 0, 0, 0, 0),
   ];
   centerOfMassFrame(bodies);
   const omega = Math.sqrt((G_DEFAULT * (M + 2 * m)) / (a * a * a));
@@ -48,9 +48,9 @@ export const PRESETS = [
     desc: 'Three equal masses chase each other around a single figure-8 loop. The first known choreographic solution — proved stable in 2000.',
     cite: 'Moore 1993 · Chenciner & Montgomery 2000',
     bodies: setSizes([
-      C(1, 0x67e8f9, -0.97000436, 0.24308753, 0, 0.4662036850, 0.4323657300, 0),
-      C(1, 0xf0abfc, 0, 0, 0, -0.93240737, -0.86473146, 0),
-      C(1, 0xfcd34d, 0.97000436, -0.24308753, 0, 0.4662036850, 0.4323657300, 0),
+      C(1, 0x7fa8b5, -0.97000436, 0.24308753, 0, 0.4662036850, 0.4323657300, 0),
+      C(1, 0xc98b86, 0, 0, 0, -0.93240737, -0.86473146, 0),
+      C(1, 0xd9b46b, 0.97000436, -0.24308753, 0, 0.4662036850, 0.4323657300, 0),
     ]),
     expect: 'bounded',
   },
@@ -88,9 +88,9 @@ export const PRESETS = [
     desc: 'A periodic solution from the Broucke–Hénon classification: two bodies sweep mirrored arcs while the third crosses between them, repeating exactly.',
     cite: 'Broucke 1975 · Hénon 1976 · van derbei suite',
     bodies: setSizes([
-      C(1, 0x67e8f9, -1, 0, 0, 0, -0.9393326, 0),
-      C(1, 0xfcd34d, 0.5, -0.647584, 0, -0.505328, 0.4696663, 0),
-      C(1, 0xf0abfc, 0.5, 0.647584, 0, 0.505328, 0.4696663, 0),
+      C(1, 0x7fa8b5, -1, 0, 0, 0, -0.9393326, 0),
+      C(1, 0xd9b46b, 0.5, -0.647584, 0, -0.505328, 0.4696663, 0),
+      C(1, 0xc98b86, 0.5, 0.647584, 0, 0.505328, 0.4696663, 0),
     ]),
     expect: 'bounded',
   },
@@ -100,9 +100,9 @@ export const PRESETS = [
     desc: 'Three equal masses fixed at the vertices of an equilateral triangle, rotating about its centre. An exact solution — but linearly UNSTABLE for equal masses: expect it to break apart eventually (or instantly with Perturb).',
     cite: 'Lagrange 1772',
     bodies: setSizes([
-      C(1, 0xfcd34d, 0, 1, 0, -0.759836, 0, 0),
-      C(1, 0x67e8f9, -0.866025, -0.5, 0, 0.379918, -0.658037, 0),
-      C(1, 0xf0abfc, 0.866025, -0.5, 0, 0.379918, 0.658037, 0),
+      C(1, 0xd9b46b, 0, 1, 0, -0.759836, 0, 0),
+      C(1, 0x7fa8b5, -0.866025, -0.5, 0, 0.379918, -0.658037, 0),
+      C(1, 0xc98b86, 0.866025, -0.5, 0, 0.379918, 0.658037, 0),
     ]),
     expect: 'bounded', unstable: true,
   },
@@ -118,9 +118,9 @@ export const PRESETS = [
     desc: 'Three equal masses on a straight line, rotating rigidly about the centre of mass. An exact solution — and famously unstable: the slightest nudge collapses it into a chaotic encounter.',
     cite: 'Euler 1767',
     bodies: setSizes([
-      C(1, 0x67e8f9, -1, 0, 0, 0, -1.118034, 0),
-      C(1, 0xfcd34d, 0, 0, 0, 0, 0, 0),
-      C(1, 0xf0abfc, 1, 0, 0, 0, 1.118034, 0),
+      C(1, 0x7fa8b5, -1, 0, 0, 0, -1.118034, 0),
+      C(1, 0xd9b46b, 0, 0, 0, 0, 0, 0),
+      C(1, 0xc98b86, 1, 0, 0, 0, 1.118034, 0),
     ]),
     expect: 'bounded', unstable: true,
   },
@@ -130,9 +130,9 @@ export const PRESETS = [
     desc: 'Masses 3, 4 and 5 start from rest on a right triangle with integer sides. Burrau’s 1913 benchmark: a long quasi-periodic dance, then a violent close encounter ejects one body and leaves a tight binary.',
     cite: 'Burrau 1913 · Szebehely & Peters 1967',
     bodies: setSizes([
-      C(3, 0x67e8f9, 1, 3, 0, 0, 0, 0),
-      C(4, 0xfcd34d, -2, -1, 0, 0, 0, 0),
-      C(5, 0xf0abfc, 1, -1, 0, 0, 0, 0),
+      C(3, 0x7fa8b5, 1, 3, 0, 0, 0, 0),
+      C(4, 0xd9b46b, -2, -1, 0, 0, 0, 0),
+      C(5, 0xc98b86, 1, -1, 0, 0, 0, 0),
     ]),
     expect: 'free', int: { eps: 1e-4 },
   },
@@ -142,9 +142,9 @@ export const PRESETS = [
     desc: 'Three comparable masses thrown in with generic velocities. Sensitive dependence on initial conditions on full display — watch the energy-drift readout spike through close encounters.',
     cite: 'generic initial conditions',
     bodies: setSizes([
-      C(1, 0x67e8f9, -1.6, 0.3, 0, 0.2, -0.15, 0),
-      C(1.1, 0xf0abfc, 1.4, -0.4, 0, -0.25, 0.2, 0),
-      C(0.9, 0xfcd34d, 0.2, 1.2, 0, -0.15, -0.3, 0),
+      C(1, 0x7fa8b5, -1.6, 0.3, 0, 0.2, -0.15, 0),
+      C(1.1, 0xc98b86, 1.4, -0.4, 0, -0.25, 0.2, 0),
+      C(0.9, 0xd9b46b, 0.2, 1.2, 0, -0.15, -0.3, 0),
     ]),
     expect: 'free',
   },
@@ -153,9 +153,9 @@ export const PRESETS = [
     desc: 'A light body falls into a tight equal-mass binary and is flung away at high speed — the gravitational slingshot used by interplanetary probes, in its purest three-body form.',
     cite: 'binary–single scattering',
     bodies: setSizes([
-      C(4, 0xfcd34d, -0.8, 0, 0, 0, -2.2360680, 0),
-      C(4, 0xfcd34d, 0.8, 0, 0, 0, 2.2360680, 0),
-      C(0.1, 0x67e8f9, 0, 4.2, 0, 0.3, -1.1, 0),
+      C(4, 0xd9b46b, -0.8, 0, 0, 0, -2.2360680, 0),
+      C(4, 0xd9b46b, 0.8, 0, 0, 0, 2.2360680, 0),
+      C(0.1, 0x7fa8b5, 0, 4.2, 0, 0.3, -1.1, 0),
     ]),
     expect: 'free',
   },
@@ -164,9 +164,9 @@ export const PRESETS = [
     desc: 'An unstable hierarchy: two bodies form a tight pair while the third spirals in, exchanges energy, and is ejected to infinity. The classic route to a binary + runaway star.',
     cite: 'binary–single ejection',
     bodies: setSizes([
-      C(1, 0xfcd34d, -1.1, 0, 0, 0, -0.4767308, 0),
-      C(1, 0xfcd34d, 1.1, 0, 0, 0, 0.4767308, 0),
-      C(1, 0x67e8f9, 0, 5.5, 0, 0.55, -0.05, 0),
+      C(1, 0xd9b46b, -1.1, 0, 0, 0, -0.4767308, 0),
+      C(1, 0xd9b46b, 1.1, 0, 0, 0, 0.4767308, 0),
+      C(1, 0x7fa8b5, 0, 5.5, 0, 0.55, -0.05, 0),
     ]),
     expect: 'free', int: { hMax: 0.002, c: 0.005 },
   },
@@ -175,9 +175,9 @@ export const PRESETS = [
     desc: 'A third body crosses a wide binary, carries away energy, and the remaining pair hardens into a tighter orbit — how binaries shrink in dense star clusters.',
     cite: 'three-body recombination',
     bodies: setSizes([
-      C(3, 0xfcd34d, -1.4, 0, 0, 0, -1.2677314, 0),
-      C(3, 0xfcd34d, 1.4, 0, 0, 0, 1.2677314, 0),
-      C(1, 0x67e8f9, -4.5, 2.6, 0, 0.75, -0.45, 0),
+      C(3, 0xd9b46b, -1.4, 0, 0, 0, -1.2677314, 0),
+      C(3, 0xd9b46b, 1.4, 0, 0, 0, 1.2677314, 0),
+      C(1, 0x7fa8b5, -4.5, 2.6, 0, 0.75, -0.45, 0),
     ]),
     expect: 'free',
   },
@@ -186,9 +186,9 @@ export const PRESETS = [
     desc: 'A massive central body with two light companions on well-separated circular orbits — a stable hierarchy, the architecture of most known triple star systems.',
     cite: 'stable hierarchical architecture',
     bodies: setSizes([
-      C(16, 0xfcd34d, 0, 0, 0, 0, 0, 0),
-      C(0.2, 0x67e8f9, 2, 0, 0, 0, 2.8108030, 0),
-      C(0.12, 0xf0abfc, -4, 4, 0, -1.1847887, -1.1847887, 0),
+      C(16, 0xd9b46b, 0, 0, 0, 0, 0, 0),
+      C(0.2, 0x7fa8b5, 2, 0, 0, 0, 2.8108030, 0),
+      C(0.12, 0xc98b86, -4, 4, 0, -1.1847887, -1.1847887, 0),
     ]),
     expect: 'bounded',
   },
