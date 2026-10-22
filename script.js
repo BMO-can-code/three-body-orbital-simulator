@@ -150,7 +150,12 @@ function loadPreset(key) {
     trails.push(trail);
   }
 
-  document.getElementById('presetSelect').value = key;
+  document.getElementById('orbitButtonText').textContent = preset.name;
+  document.querySelectorAll('#orbitMenu .orbit-option').forEach((option) => {
+    const isCurrent = option.dataset.key === key;
+    option.classList.toggle('is-current', isCurrent);
+    option.setAttribute('aria-selected', String(isCurrent));
+  });
 }
 
 function resetSimulation() {
@@ -217,27 +222,88 @@ function perturb() {
   }
 }
 
-function populatePresetSelect() {
-  const sel = document.getElementById('presetSelect');
+const orbitButton = document.getElementById('orbitButton');
+const orbitMenu = document.getElementById('orbitMenu');
+const orbitButtonText = document.getElementById('orbitButtonText');
+
+function buildOrbitMenu() {
   for (const group of GROUP_ORDER) {
-    const og = document.createElement('optgroup');
-    og.label = group;
+    const label = document.createElement('div');
+    label.className = 'orbit-group';
+    label.textContent = group;
+    orbitMenu.appendChild(label);
+
     for (const p of PRESETS) {
       if (p.group !== group) continue;
-      const opt = document.createElement('option');
-      opt.value = p.key;
-      opt.textContent = p.name;
-      og.appendChild(opt);
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.className = 'orbit-option';
+      option.dataset.key = p.key;
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', 'false');
+      option.textContent = p.name;
+      option.addEventListener('click', () => {
+        loadPreset(p.key);
+        closeOrbitMenu();
+        orbitButton.focus();
+      });
+      orbitMenu.appendChild(option);
     }
-    sel.appendChild(og);
   }
 }
 
-populatePresetSelect();
+function openOrbitMenu() {
+  orbitMenu.hidden = false;
+  orbitButton.setAttribute('aria-expanded', 'true');
+  const current = orbitMenu.querySelector('.orbit-option.is-current') || orbitMenu.querySelector('.orbit-option');
+  if (current) current.focus();
+}
 
-document.getElementById('presetSelect').addEventListener('change', (e) => {
-  loadPreset(e.target.value);
+function closeOrbitMenu() {
+  orbitMenu.hidden = true;
+  orbitButton.setAttribute('aria-expanded', 'false');
+}
+
+orbitButton.addEventListener('click', () => {
+  if (orbitMenu.hidden) openOrbitMenu(); else closeOrbitMenu();
 });
+
+orbitButton.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (orbitMenu.hidden) openOrbitMenu();
+  }
+});
+
+orbitMenu.addEventListener('keydown', (e) => {
+  const items = [...orbitMenu.querySelectorAll('.orbit-option')];
+  const index = items.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    items[Math.min(items.length - 1, index + 1)].focus();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    items[Math.max(0, index - 1)].focus();
+  } else if (e.key === 'Home') {
+    e.preventDefault();
+    items[0].focus();
+  } else if (e.key === 'End') {
+    e.preventDefault();
+    items[items.length - 1].focus();
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    closeOrbitMenu();
+    orbitButton.focus();
+  } else if (e.key === 'Tab') {
+    closeOrbitMenu();
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (!orbitMenu.hidden && !e.target.closest('.orbit-picker')) closeOrbitMenu();
+});
+
+buildOrbitMenu();
 document.getElementById('pauseBtn').addEventListener('click', () => {
   running = !running;
   const btn = document.getElementById('pauseBtn');
@@ -263,7 +329,7 @@ document.getElementById('autoRotateToggle').addEventListener('change', (e) => {
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.target.closest('input, select, button, textarea')) return;
   if (e.code === 'Space') { e.preventDefault(); document.getElementById('pauseBtn').click(); }
   if (e.code === 'KeyR') { e.preventDefault(); resetSimulation(); }
   if (e.code === 'KeyP') { e.preventDefault(); perturb(); }
