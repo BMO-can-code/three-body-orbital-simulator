@@ -3,29 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Three-Body Problem Simulator — Periodic Orbits &amp; Gravitational Chaos</title>
-  <meta name="description" content="Interactive 3D three-body problem simulator with 25 numerically verified presets: figure-8, Šuvakov–Dmitrašinović choreographies, Lagrange &amp; Euler solutions, Burrau's Pythagorean problem and chaotic scattering. Built with an adaptive Velocity Verlet integrator.">
+  <title>Three-Body Problem Simulation</title>
+  <meta name="description" content="An interactive 3D gravitational simulation of the famous three-body problem, built with Three.js. 25 periodic-orbit and classical presets, each numerically verified.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="container"></div>
 
-  <div id="telemetry">
-    <span>KE <b id="keValue">–</b></span>
-    <span>PE <b id="peValue">–</b></span>
-    <span>E <b id="eValue">–</b></span>
-    <span class="warn">ΔE/E₀ <b id="dEValue">–</b></span>
-    <span>|P| <b id="pValue">–</b></span>
-    <span>|L| <b id="lValue">–</b></span>
-    <span>t <b id="tValue">0.00</b></span>
-    <span>steps <b id="stepsValue">0</b></span>
-    <span>fps <b id="fpsValue">–</b></span>
-  </div>
-
-  <div id="spawnHint">Spawn mode — drag on the scene to launch a new body</div>
-
   <div id="ui">
-    <div class="title">Three-Body Problem <span class="badge">Made by Mayank</span></div>
+    <div class="title">Three-Body Problem <span style="font-size:9px;padding:2px 8px;border:1px solid rgba(255,255,255,.2);border-radius:3px;color:#34d399;text-transform:uppercase;letter-spacing:1px;margin-left:8px">Made by Mayank</span></div>
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="simulation">Simulation</button>
@@ -36,31 +22,91 @@
 
     <div id="tab-simulation" class="tab-content active">
       <div class="controls">
-        <button id="pauseBtn" title="Play/Pause (Space)">⏸</button>
-        <button id="resetBtn" title="Reset (R)">↺</button>
-        <button id="perturbBtn" title="Perturb — nudge to see chaos (P)">⟳</button>
+        <button id="pauseBtn" title="Play/Pause">⏸</button>
+        <button id="resetBtn" title="Reset">↺</button>
+        <button id="perturbBtn" title="Perturb (nudge to see chaos)">⟳</button>
 
-        <select id="presetSelect" title="Initial conditions"></select>
+        <select id="presetSelect"></select>
 
         <div class="control-group">
           <label for="speedSlider">Speed</label>
-          <input type="range" id="speedSlider" min="0.1" max="10" step="0.1" value="1">
+          <input type="range" id="speedSlider" min="0.1" max="5" step="0.1" value="1">
           <span id="speedLabel">1.0×</span>
         </div>
 
-        <div class="mode-toggle" title="Orbit: drag rotates camera · Spawn: drag launches a body (M)">
-          <button class="mode-btn active" data-mode="orbit">Orbit</button>
-          <button class="mode-btn" data-mode="spawn">Spawn</button>
-        </div>
-
         <label class="toggle"><input type="checkbox" id="trailToggle" checked> Trails</label>
+        <label class="toggle"><input type="checkbox" id="autoRotateToggle"> Orbit</label>
       </div>
 
-      <div class="info">Drag to orbit · Scroll to zoom · Space pause · R reset · P perturb · T trails · M mode</div>
+      <div class="energy">
+        <span>KE <span id="keValue">0.0000</span></span>
+        <span class="sep">|</span>
+        <span>PE <span id="peValue">0.0000</span></span>
+        <span class="sep">|</span>
+        <span>E <span id="totalValue">0.0000</span></span>
+      </div>
+
+      <div class="info">Drag orbit · Scroll zoom · Space pause · R reset · P perturb</div>
     </div>
 
     <div id="tab-orbits" class="tab-content">
-      <div id="orbitList" class="orbit-list"></div>
+      <div class="orbit-list">
+        <div class="orbit-section">Choreographies (2000–2013)</div>
+        <div class="orbit-item">
+          <div class="orbit-name">Figure-8</div>
+          <div class="orbit-desc">Chenciner &amp; Montgomery (2000). Three equal masses chase each other along a figure-8 curve. Found numerically by Moore, proved periodic by Chenciner &amp; Montgomery using variational methods.</div>
+        </div>
+        <div class="orbit-item">
+          <div class="orbit-name">Butterfly I–IV</div>
+          <div class="orbit-desc">Šuvakov &amp; Dmitrašinović (2013). Four families of symmetric periodic orbits resembling butterfly wings. Discovered by systematic search in initial-condition space.</div>
+        </div>
+        <div class="orbit-item">
+          <div class="orbit-name">Moth I–III</div>
+          <div class="orbit-desc">Šuvakov &amp; Dmitrašinović (2013). Asymmetric orbits with moth-like trajectories. The two bodies orbit while the third oscillates.</div>
+        </div>
+        <div class="orbit-item">
+          <div class="orbit-name">Yarn I–III</div>
+          <div class="orbit-desc">Šuvakov &amp; Dmitrašinović (2013). Tight, interwoven orbits resembling wound yarn. Bodies remain close while executing complex loops.</div>
+        </div>
+        <div class="orbit-item">
+          <div class="orbit-name">Yin-Yang I–II</div>
+          <div class="orbit-desc">Šuvakov &amp; Dmitrašinović (2013). Complementary S-shaped orbits. Each body traces a yin-yang-like path.</div>
+        </div>
+        <div class="orbit-item">
+          <div class="orbit-name">Goggles</div>
+          <div class="orbit-desc">Šuvakov &amp; Dmitrašinović (2013). Two large loops resembling eyeglasses with a small oscillation between them.</div>
+        </div>
+        <div class="orbit-item">
+          <div class="orbit-name">Dragonfly</div>
+          <div class="orbit-desc">Šuvakov &amp; Dmitrašinović (2013). Wide wing-like excursions with rapid central oscillations.</div>
+        </div>
+        <div class="orbit-item">
+          <div class="orbit-name">Moorish Dance</div>
+          <div class="orbit-desc">Šuvakov &amp; Dmitrašinović (2013). Graceful periodic orbit with symmetric body exchanges.</div>
+        </div>
+
+        <div class="orbit-section">Classical Solutions (1767–1772)</div>
+        <div class="orbit-item">
+          <div class="orbit-name">Lagrange Equilateral Triangle</div>
+          <div class="orbit-desc">Lagrange (1772). Three equal masses at vertices of an equilateral triangle, all rotating about the center. First known periodic solution. Stable for mass ratios m₁:m₂:m₃ within Routh's criterion.</div>
+        </div>
+        <div class="orbit-item">
+          <div class="orbit-name">Euler Collinear</div>
+          <div class="orbit-desc">Euler (1767). Three masses on a line, rotating rigidly about the center of mass. The three Euler points L₁, L₂, L₃. Unstable — requires fine-tuning to maintain.</div>
+        </div>
+
+        <div class="orbit-section">Broucke-Henon Families</div>
+        <div class="orbit-item">
+          <div class="orbit-name">Broucke A2 / A4</div>
+          <div class="orbit-desc">Broucke &amp; Henon (1970s). Symmetric periodic orbits in the isosceles subclass. Part of a continuum of periodic solutions connected by continuation.</div>
+        </div>
+
+        <div class="orbit-section">Famous Problems</div>
+        <div class="orbit-item">
+          <div class="orbit-name">Burrau (Pythagorean) Problem</div>
+          <div class="orbit-desc">Burrau (1913). Masses 3, 4, 5 at vertices of a 3-4-5 right triangle, released from rest. Exhibits violent chaotic scattering with close encounters and eventual ejection. Solved numerically by Szebehely &amp; Peters (1967).</div>
+        </div>
+      </div>
     </div>
 
     <div id="tab-outcomes" class="tab-content">
@@ -136,18 +182,18 @@
         <div class="physics-item">
           <div class="physics-label">Why It's Hard</div>
           <div class="physics-note">
-            • No general closed-form solution exists (Poincaré 1890 — proved the problem is non-integrable)
-            • The system has 18 phase-space dimensions (3 bodies × 3 coords × 2 for position+velocity)
-            • Only 10 integrals of motion exist: 3 energy, 3 momentum, 3 angular momentum, 1 center-of-mass
-            • Non-integrable = cannot reduce to quadratures. Trajectories are generically chaotic
-            • Sensitive dependence on initial conditions: δ(t) ~ δ₀ e^(λt) where λ is the Lyapunov exponent
+            • No general closed-form solution exists (Poincaré 1890 — proved the problem is non-integrable)<br>
+            • The system has 18 phase-space dimensions (3 bodies × 3 coords × 2 for position+velocity)<br>
+            • Only 10 integrals of motion exist: 3 energy, 3 momentum, 3 angular momentum, 1 center-of-mass<br>
+            • Non-integrable = cannot reduce to quadratures. Trajectories are generically chaotic<br>
+            • Sensitive dependence on initial conditions: δ(t) ~ δ₀ e<sup>λt</sup> where λ is the Lyapunov exponent
           </div>
         </div>
 
         <div class="physics-item">
           <div class="physics-label">Newton's Law of Gravitation</div>
           <div class="physics-eq">Fᵢⱼ = G mᵢ mⱼ / |rᵢ - rⱼ|² × r̂ᵢⱼ</div>
-          <div class="physics-note">Each body feels the gravitational pull of the other two. Forces superpose: F_total = F₁₂ + F₁₃ for body 1. The pull on body i uses the mass of the OTHER body, mⱼ — the single most common bug in home-grown N-body code.</div>
+          <div class="physics-note">Each body feels the gravitational pull from the other two. Forces superpose: F_total = F₁₂ + F₁₃ for body 1. The pull on body i uses the mass of the OTHER body, mⱼ — the most common bug in home-grown N-body code.</div>
         </div>
 
         <div class="physics-item">
@@ -159,19 +205,19 @@
         <div class="physics-item">
           <div class="physics-label">Numerical Integration (This Simulation)</div>
           <div class="physics-note">
-            • Velocity Verlet (kick–drift–kick): symplectic, 2nd-order, time-reversible
-            • Adaptive timestep: h = min(hMax, c · r_min / v_rel) — steps shrink automatically during close encounters
-            • Softening ε = 2×10⁻⁵ … 10⁻⁴ keeps the force finite at the closest passes
-            • Each preset ships with the timestep/softening settings that verify it for t = 400 (run `npm run verify`)
-            • Energy, momentum and angular momentum are monitored live in the top bar
+            • Velocity Verlet (kick–drift–kick): symplectic, 2nd-order and time-reversible<br>
+            • Adaptive timestep: h = min(hMax, c · r_min / v_rel) — steps shrink automatically during close encounters<br>
+            • Softening parameter ε keeps the force finite at the closest passes<br>
+            • Each preset ships the timestep/softening settings that verify it for t = 400 (npm run verify)<br>
+            • Every preset is centre-of-mass corrected at load
           </div>
         </div>
 
         <div class="physics-item">
           <div class="physics-label">Conservation Laws</div>
           <div class="physics-eq">
-            Energy: E = ½ Σ mᵢ vᵢ² - Σ G mᵢ mⱼ / rᵢⱼ = const
-            Momentum: P = Σ mᵢ vᵢ = const
+            Energy: E = ½ Σ mᵢ vᵢ² - Σ G mᵢ mⱼ / rᵢⱼ = const<br>
+            Momentum: P = Σ mᵢ vᵢ = const<br>
             Angular Momentum: L = Σ mᵢ rᵢ × vᵢ = const
           </div>
           <div class="physics-note">These 10 conserved quantities are the ONLY ones. The system is non-integrable — no additional hidden symmetries exist (Poincaré's theorem).</div>
@@ -180,11 +226,11 @@
         <div class="physics-item">
           <div class="physics-label">Chaos &amp; Lyapunov Exponents</div>
           <div class="physics-note">
-            • Lyapunov exponent λ measures divergence rate of nearby trajectories
-            • λ > 0 → chaotic (exponential divergence)
-            • λ = 0 → regular/quasi-periodic
-            • Lyapunov time τ = 1/λ → predictability horizon
-            • For three-body: τ ~ few orbital periods
+            • Lyapunov exponent λ measures divergence rate of nearby trajectories<br>
+            • λ > 0 → chaotic (exponential divergence)<br>
+            • λ = 0 → regular/quasi-periodic<br>
+            • Lyapunov time τ = 1/λ → predictability horizon<br>
+            • For three-body: τ ~ few orbital periods<br>
             • "Butterfly effect": rounding errors grow exponentially → long-term prediction impossible
           </div>
         </div>
@@ -192,11 +238,11 @@
         <div class="physics-item">
           <div class="physics-label">Periodic Orbits &amp; Choreographies</div>
           <div class="physics-note">
-            • Periodic orbits satisfy: r(t) = r(t + T) for all bodies
-            • Choreographies: all bodies trace the same curve with phase shift
-            • Found by: variational methods, Newton-Raphson root-finding in initial-condition space
-            • ~13 families known (Šuvakov &amp; Dmitrašinović 2013), all initial conditions published to 15 digits
-            • Many more likely exist — search is computationally expensive
+            • Periodic orbits satisfy: r(t) = r(t + T) for all bodies<br>
+            • Choreographies: all bodies trace the same curve with phase shift<br>
+            • Found by: variational methods, Newton-Raphson root-finding in initial-condition space<br>
+            • ~13 families known (Šuvakov &amp; Dmitrašinović 2013), initial conditions published to 15 digits<br>
+            • Many more likely exist — search is computationally expensive<br>
             • Symmetry reduction reduces dimensionality (time-reversal, rotational symmetry)
           </div>
         </div>
@@ -204,12 +250,12 @@
         <div class="physics-item">
           <div class="physics-label">Applications</div>
           <div class="physics-note">
-            • Astrophysics: triple star systems, planetary dynamics, galactic nuclei
-            • Exoplanets: stability of multi-planet systems, Trojan asteroids
-            • Gravitational waves: three-body mergers in LIGO/Virgo
-            • Cosmology: dark matter halo dynamics
-            • Molecular dynamics: three-body scattering in chemical reactions
-            • Spacecraft: gravity-assist trajectories, parking orbits at Lagrange points
+            • Astrophysics: triple star systems, planetary dynamics, galactic nuclei<br>
+            • Exoplanets: stability of multi-planet systems, Trojan asteroids<br>
+            • Gravitational waves: three-body mergers in LIGO/Virgo<br>
+            • Cosmology: dark matter halo dynamics<br>
+            • Molecular dynamics: three-body scattering in chemical reactions<br>
+            • Spacecraft: gravity-assist trajectories, parking orbits at Lagrange points<br>
             • Mathematics: proof of chaos, topology of phase space, Arnold diffusion
           </div>
         </div>
