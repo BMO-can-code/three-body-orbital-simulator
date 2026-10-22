@@ -6,6 +6,7 @@ import {
 import { PRESETS, GROUP_ORDER, buildPreset } from './presets.js';
 
 const TRAIL_LENGTH = 1500;
+const TRAIL_DT = 0.005;
 const MAX_STEPS_PER_FRAME = 4000;
 
 const COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1'];
@@ -16,12 +17,18 @@ let bodies = [];
 let meshes = [];
 let trails = [];
 let trailHistory = [];
+let trailBuffers = [];
+let trailAttrs = [];
+let trailDirty = [];
+let trailCounts = [];
 let glows = [];
 let currentKey = 'figure8';
 let currentInt = null;
 let running = true;
 let speed = 1;
 let showTrails = true;
+let simTime = 0;
+let lastTrailTime = 0;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a0a1a);
@@ -96,6 +103,9 @@ function loadPreset(key) {
   for (const g of glows) { scene.remove(g); g.material.dispose(); }
 
   meshes = []; trails = []; trailHistory = []; glows = [];
+  trailBuffers = []; trailAttrs = []; trailDirty = []; trailCounts = [];
+  simTime = 0;
+  lastTrailTime = 0;
 
   for (let i = 0; i < bodies.length; i++) {
     const body = bodies[i];
@@ -122,9 +132,16 @@ function loadPreset(key) {
     scene.add(glow);
     glows.push(glow);
 
+    const buffer = new Float32Array(TRAIL_LENGTH * 3);
+    const attr = new THREE.BufferAttribute(buffer, 3);
+    attr.setUsage(THREE.DynamicDrawUsage);
     trailHistory.push([]);
+    trailBuffers.push(buffer);
+    trailAttrs.push(attr);
+    trailDirty.push(false);
+    trailCounts.push(0);
     const trailGeo = new THREE.BufferGeometry();
-    trailGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(TRAIL_LENGTH * 3), 3));
+    trailGeo.setAttribute('position', attr);
     trailGeo.setDrawRange(0, 0);
     const trail = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({
       color: col, transparent: true, opacity: 0.35,
@@ -134,9 +151,6 @@ function loadPreset(key) {
   }
 
   document.getElementById('presetSelect').value = key;
-  document.querySelectorAll('.orbit-item').forEach((el) => {
-    el.classList.toggle('active-orbit', el.dataset.key === key);
-  });
 }
 
 function resetSimulation() {
@@ -147,16 +161,31 @@ function resetSimulation() {
     bodies[i].vx = b[i].vx; bodies[i].vy = b[i].vy; bodies[i].vz = b[i].vz;
     bodies[i].ax = 0; bodies[i].ay = 0; bodies[i].az = 0;
     trailHistory[i] = [];
+    trailDirty[i] = true;
+    trailCounts[i] = -1;
     meshes[i].position.set(bodies[i].x, bodies[i].y, bodies[i].z);
     glows[i].position.set(bodies[i].x, bodies[i].y, bodies[i].z);
-    trails[i].geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(TRAIL_LENGTH * 3), 3));
     trails[i].geometry.setDrawRange(0, 0);
   }
   computeAccelerations(bodies, G_DEFAULT, currentInt.eps2);
+  simTime = 0;
+  lastTrailTime = 0;
 }
 
 function updatePhysics() {
-  adaptiveStep(bodies, G_DEFAULT, currentInt);
+  simTime += adaptiveStep(bodies, G_DEFAULT, currentInt);
+}
+
+function recordTrail() {
+  if (simTime - lastTrailTime < TRAIL_DT) return;
+  lastTrailTime = simTime;
+  for (let i = 0; i < bodies.length; i++) {
+    const p = bodies[i];
+    const hist = trailHistory[i];
+    hist.push(p.x, p.y, p.z);
+    if (hist.length > TRAIL_LENGTH * 3) hist.splice(0, 3);
+    trailDirty[i] = true;
+  }
 }
 
 function updateVisuals() {
@@ -164,11 +193,14 @@ function updateVisuals() {
     const p = bodies[i];
     meshes[i].position.set(p.x, p.y, p.z);
     glows[i].position.set(p.x, p.y, p.z);
-    trailHistory[i].push(p.x, p.y, p.z);
-    if (trailHistory[i].length > TRAIL_LENGTH * 3) trailHistory[i].splice(0, 3);
-    const positions = new Float32Array(trailHistory[i]);
-    trails[i].geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    trails[i].geometry.setDrawRange(0, trailHistory[i].length / 3);
+    const hist = trailHistory[i];
+    if (trailDirty[i] && hist.length / 3 !== trailCounts[i]) {
+      trailBuffers[i].set(hist);
+      trailAttrs[i].needsUpdate = true;
+      trails[i].geometry.setDrawRange(0, hist.length / 3);
+      trailCounts[i] = hist.length / 3;
+      trailDirty[i] = false;
+    }
     trails[i].visible = showTrails;
   }
   const e = energies(bodies, G_DEFAULT, currentInt.eps2);
@@ -201,36 +233,7 @@ function populatePresetSelect() {
   }
 }
 
-function buildGallery() {
-  const gallery = document.getElementById('orbitGallery');
-  for (const group of GROUP_ORDER) {
-    const section = document.createElement('div');
-    section.className = 'orbit-section';
-    section.textContent = group;
-    gallery.appendChild(section);
-    for (const p of PRESETS) {
-      if (p.group !== group) continue;
-      const item = document.createElement('div');
-      item.className = 'orbit-item';
-      item.dataset.key = p.key;
-      const name = document.createElement('div');
-      name.className = 'orbit-name';
-      name.textContent = p.name;
-      const desc = document.createElement('div');
-      desc.className = 'orbit-desc';
-      desc.textContent = p.desc || '';
-      item.append(name, desc);
-      item.addEventListener('click', () => {
-        loadPreset(p.key);
-        document.querySelector('[data-tab="simulation"]').click();
-      });
-      gallery.appendChild(item);
-    }
-  }
-}
-
 populatePresetSelect();
-buildGallery();
 
 document.getElementById('presetSelect').addEventListener('change', (e) => {
   loadPreset(e.target.value);
@@ -241,9 +244,14 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
 });
 document.getElementById('resetBtn').addEventListener('click', resetSimulation);
 document.getElementById('perturbBtn').addEventListener('click', perturb);
+function setSpeedFromSlider(value) {
+  speed = 0.1 * Math.pow(300, (value - 1) / 99);
+  document.getElementById('speedLabel').textContent =
+    (speed >= 10 ? Math.round(speed) : speed.toFixed(1)) + '\u00d7';
+}
+
 document.getElementById('speedSlider').addEventListener('input', (e) => {
-  speed = parseFloat(e.target.value);
-  document.getElementById('speedLabel').textContent = speed.toFixed(1) + '\u00d7';
+  setSpeedFromSlider(parseFloat(e.target.value));
 });
 document.getElementById('trailToggle').addEventListener('change', (e) => { showTrails = e.target.checked; });
 document.getElementById('autoRotateToggle').addEventListener('change', (e) => {
@@ -258,7 +266,9 @@ document.addEventListener('keydown', (e) => {
   if (e.code === 'KeyP') { e.preventDefault(); perturb(); }
 });
 
-loadPreset('figure8');
+const requestedKey = new URLSearchParams(location.search).get('preset');
+const validKey = PRESETS.some((p) => p.key === requestedKey) ? requestedKey : 'figure8';
+loadPreset(validKey);
 
 let frameAccum = 0;
 
@@ -269,10 +279,11 @@ function animate() {
     let steps = 0;
     while (frameAccum >= 1 && steps < MAX_STEPS_PER_FRAME) {
       updatePhysics();
+      recordTrail();
       frameAccum -= 1;
       steps++;
     }
-    if (steps === 0) updatePhysics();
+    if (steps === 0) { updatePhysics(); recordTrail(); }
     updateVisuals();
   }
   controls.update();

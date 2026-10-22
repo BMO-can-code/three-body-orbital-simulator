@@ -33,12 +33,12 @@ Most three-body demos ship presets copy-pasted from a paper's summary table. Tho
 
 ## Features
 
-- **3D rendering** (Three.js r160) with bloom, per-body glow sprites, and fading chronologically-coloured trails.
-- **Live telemetry bar:** kinetic/potential/total energy, relative energy drift `ΔE/E₀`, momentum `|P|`, angular momentum `|L|`, sim time, integration steps, and FPS.
-- **Play / pause / reset / perturb** and a 0.1×–10× speed slider.
-- **Orbit ⇄ Spawn mode:** in Spawn mode, drag anywhere on the scene to launch a new body with the initial velocity you draw.
-- **Educational tabs:** *Periodic Orbits* (per-preset descriptions + citations), *Outcomes* (the nine canonical fates of a three-body encounter), and *How It Works* (the maths, conservation laws, chaos and Lyapunov exponents).
-- **Keyboard shortcuts:** `Space` play/pause · `R` reset · `P` perturb · `T` trails · `M` mode.
+- **3D rendering** (Three.js r160) with per-body glow sprites and fading colour-coded trails.
+- **Live energy readout** of kinetic, potential and total energy next to the controls.
+- **Play / pause / reset / perturb**, trails toggle, auto-orbit, and a 0.1×–30× speed slider.
+- **Separate Orbits & Theory page** (`learn.html`): a clickable gallery of all 25 presets with descriptions, the eleven canonical outcomes of a three-body encounter, and the maths behind the simulation. Clicking an orbit loads it in the simulator.
+- **Deep links:** `index.html?preset=figure8` loads any preset directly.
+- **Keyboard shortcuts:** `Space` play/pause · `R` reset · `P` perturb.
 - **Responsive** — collapses to a bottom sheet on mobile.
 
 ## Running locally
@@ -83,12 +83,15 @@ Exit code is non-zero if any preset escapes or drifts beyond tolerance — so th
 ## Project layout
 
 ```
-index.html            # markup, tabs, telemetry bar, import-map for Three.js
-style.css             # glassmorphic UI, responsive bottom-sheet layout
-script.js             # Three.js scene, render loop, input, trails, HUD
+index.html            # simulator markup, import-map for Three.js
+learn.html            # Orbits & Theory page (gallery, outcomes, methods)
+style.css             # glassmorphic UI, responsive bottom-sheet, article layout
+script.js             # Three.js scene, render loop, input, trails, energy HUD
+learn.js              # builds the preset gallery on the theory page
 physics.js            # integrator + conservation laws (shared by site & verifier)
 presets.js            # the 25-preset catalogue + analytic builders
 verify-presets.mjs    # CI-style verification gate (npm run verify)
+start.command         # macOS double-click launcher for a local server
 ```
 
 `physics.js` and `presets.js` are imported by **both** the browser app and Node, so what you see on screen is exactly what is verified.

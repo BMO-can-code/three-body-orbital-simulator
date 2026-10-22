@@ -404,3 +404,222 @@ input[type="checkbox"] {
   background: rgba(78, 205, 196, 0.08);
   border-color: rgba(78, 205, 196, 0.35);
 }
+
+.panel-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.panel-nav-label {
+  opacity: 0.4;
+}
+
+.panel-link {
+  color: #4ecdc4;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s, opacity 0.15s;
+}
+
+.panel-link:hover {
+  border-color: #4ecdc4;
+}
+
+body.doc {
+  overflow: auto;
+  background:
+    radial-gradient(900px 500px at 20% -10%, rgba(78, 205, 196, 0.07), transparent 70%),
+    radial-gradient(700px 500px at 90% 10%, rgba(255, 107, 107, 0.06), transparent 70%),
+    #0a0a1a;
+  min-height: 100vh;
+}
+
+.doc-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px max(20px, calc((100vw - 820px) / 2));
+  background: rgba(10, 10, 26, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.doc-brand {
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.doc-brand:hover { color: #4ecdc4; }
+
+.doc-nav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.doc-nav a {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+
+.doc-nav a:hover { color: #4ecdc4; }
+
+.doc-main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+.doc-intro { margin-bottom: 52px; }
+
+.doc-intro h1 {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+
+.doc-lede {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.62);
+  margin-bottom: 12px;
+}
+
+.doc-sub {
+  font-size: 12px;
+  color: #4ecdc4;
+  opacity: 0.85;
+}
+
+.doc-section {
+  margin-bottom: 56px;
+  scroll-margin-top: 80px;
+}
+
+.doc-section h2 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #4ecdc4;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.doc .orbit-list {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+  gap: 4px;
+}
+
+.doc .orbit-section {
+  margin-top: 14px;
+}
+
+.doc .orbit-section:first-child { margin-top: 0; }
+
+.doc .orbit-item {
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.doc .orbit-item:hover {
+  background: rgba(78, 205, 196, 0.06);
+  border-color: rgba(78, 205, 196, 0.3);
+}
+
+.doc .orbit-name {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.doc .orbit-desc {
+  font-size: 12px;
+  opacity: 0.62;
+  line-height: 1.6;
+}
+
+.doc .orbit-item:hover .orbit-name::after { content: 'load in simulator →'; }
+
+.doc .orbit-note {
+  margin-top: 16px;
+  font-size: 11px;
+}
+
+.doc-item {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.doc-item:last-child { border-bottom: none; }
+
+.doc-item .physics-label {
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 6px;
+}
+
+.doc-item .physics-eq {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+
+.doc-item .physics-note {
+  font-size: 12.5px;
+  line-height: 1.75;
+  opacity: 0.68;
+}
+
+.doc code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+}
+
+.doc-footer {
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 12px;
+}
+
+.doc-footer a {
+  color: #4ecdc4;
+  text-decoration: none;
+}
+
+.doc-footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .doc-main { padding: 32px 16px 64px; }
+  .doc-intro h1 { font-size: 24px; }
+  .doc-header { padding: 12px 16px; }
+  .doc-nav { gap: 12px; }
+  .doc-nav a { font-size: 10px; }
+}

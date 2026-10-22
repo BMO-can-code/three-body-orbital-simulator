@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Three-Body Problem — Orbits &amp; Theory</title>
+  <meta name="description" content="The 25 verified periodic-orbit presets of the three-body problem, the possible outcomes of three-body encounters, and the numerical methods behind the simulator.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="doc">
+  <header class="doc-header">
+    <a class="doc-brand" href="index.html">&larr; Simulator</a>
+    <nav class="doc-nav">
+      <a href="#orbits">Periodic Orbits</a>
+      <a href="#outcomes">Outcomes</a>
+      <a href="#howitworks">How It Works</a>
+    </nav>
+  </header>
+
+  <main class="doc-main">
+    <section class="doc-intro">
+      <h1>Orbits &amp; Theory</h1>
+      <p class="doc-lede">
+        Everything behind the simulation lives here, away from the controls: the periodic-orbit
+        catalogue, the outcomes a three-body encounter can produce, and the numerical method
+        that keeps the figures honest.
+      </p>
+      <p class="doc-sub">Click any orbit below to load it in the simulator.</p>
+    </section>
+
+    <section id="orbits" class="doc-section">
+      <h2>Periodic Orbits</h2>
+      <p class="doc-lede">
+        Exact periodic solutions of the three-body problem. Each entry below is loaded with
+        initial conditions published to 15 significant digits, then centre-of-mass corrected
+        before the first step. All 25 are verified for 400 time units by
+        <code>npm run verify</code>.
+      </p>
+      <div class="orbit-list">
+        <div id="orbitGallery"></div>
+        <div class="orbit-note">Butterfly I and Goggles are not included: at double precision they escape within one period, so they can never be shown honestly as periodic.</div>
+      </div>
+    </section>
+
+    <section id="outcomes" class="doc-section">
+      <h2>Possible Outcomes of Three-Body Interactions</h2>
+
+      <div class="doc-item">
+        <div class="physics-label">1. Stable Periodic Orbit</div>
+        <div class="physics-note">All three bodies return to their initial configuration after one period. Extremely rare — requires fine-tuned initial conditions. Only ~13 families known as of 2013. Energy and angular momentum conserved exactly.</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">2. Quasi-Periodic Orbit</div>
+        <div class="physics-note">Bodies never exactly repeat but remain bounded. Orbits fill a torus in phase space. Common near periodic orbits — small perturbations from periodic solutions yield quasi-periodic behavior.</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">3. Binary + Ejected Single</div>
+        <div class="physics-note">Most common outcome (~50% of chaotic encounters). Two bodies form a tight binary, the third is ejected to infinity with positive energy. The binary tightens (losing energy to the ejecta) and hardens. This is the "gravitational slingshot."</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">4. Exchange Interaction</div>
+        <div class="physics-note">A passing body replaces one member of an existing binary. The original binary partner is ejected. Important in globular cluster dynamics — explains mass segregation and Blue Straggler formation.</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">5. Resonant Encounters</div>
+        <div class="physics-note">Bodies undergo multiple close approaches before eventual resolution. Can produce complex trajectories lasting many dynamical times. The system passes through several "democratic" phases where all three interact strongly.</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">6. Hierarchical Triple</div>
+        <div class="physics-note">A close binary with a distant third companion. Stable if the outer orbit is ~3× wider than the inner orbit (Mardling-Aarseth criterion). Common in exoplanetary systems and stellar triples (~50% of solar-type stars).</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">7. Collision / Merger</div>
+        <div class="physics-note">Two or three bodies collide during a close encounter. In stellar systems: tidal disruption events, stellar mergers, or common envelope evolution. In point-mass simulations: regularized contact. Produces gravitational wave bursts.</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">8. Ejection of All Three</div>
+        <div class="physics-note">Rare — all three bodies escape to infinity. Requires initial kinetic energy &gt; |potential energy|. Produces three unbound hyperbolic orbits. Total energy &gt; 0.</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">9. Figure-8 Type Choreography</div>
+        <div class="physics-note">All three bodies trace the same curve with time delay. A subset of periodic orbits. The figure-8 is the simplest example. Higher-order choreographies exist (e.g., 3×1, 4×1 symmetry types).</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">10. Lagrange Configuration (Temporary)</div>
+        <div class="physics-note">Three bodies form an equilateral triangle that rotates. Unstable in general — small perturbations grow exponentially. However, Trojan asteroids maintain quasi-Lagrange points (L₄, L₅) in the Sun-Jupiter system.</div>
+      </div>
+      <div class="doc-item">
+        <div class="physics-label">11. Euler Collinear Configuration (Unstable)</div>
+        <div class="physics-note">Three bodies remain collinear while rotating. Always unstable — any transverse perturbation causes collapse. However, the L₁, L₂, L₃ points are used for spacecraft parking orbits (James Webb at Sun-Earth L₂).</div>
+      </div>
+    </section>
+
+    <section id="howitworks" class="doc-section">
+      <h2>How It Works</h2>
+
+      <div class="doc-item">
+        <div class="physics-label">Problem Statement</div>
+        <div class="physics-eq">Given initial positions &amp; velocities of 3 point masses under Newtonian gravity, predict their motion for all future time.</div>
+      </div>
+
+      <div class="doc-item">
+        <div class="physics-label">Why It's Hard</div>
+        <div class="physics-note">
+          • No general closed-form solution exists (Poincaré 1890 — proved the problem is non-integrable)<br>
+          • The system has 18 phase-space dimensions (3 bodies × 3 coords × 2 for position+velocity)<br>
+          • Only 10 integrals of motion exist: 3 energy, 3 momentum, 3 angular momentum, 1 center-of-mass<br>
+          • Non-integrable = cannot reduce to quadratures. Trajectories are generically chaotic<br>
+          • Sensitive dependence on initial conditions: δ(t) ~ δ₀ e<sup>λt</sup> where λ is the Lyapunov exponent
+        </div>
+      </div>
+
+      <div class="doc-item">
+        <div class="physics-label">Newton's Law of Gravitation</div>
+        <div class="physics-eq">Fᵢⱼ = G mᵢ mⱼ / |rᵢ - rⱼ|² × r̂ᵢⱼ</div>
+        <div class="physics-note">Each body feels the gravitational pull from the other two. Forces superpose: F_total = F₁₂ + F₁₃ for body 1. The pull on body i uses the mass of the OTHER body, mⱼ — the most common bug in home-grown N-body code.</div>
+      </div>
+
+      <div class="doc-item">
+        <div class="physics-label">Equations of Motion</div>
+        <div class="physics-eq">mᵢ r̈ᵢ = Σⱼ≠ᵢ G mᵢ mⱼ (rⱼ - rᵢ) / |rⱼ - rᵢ|³</div>
+        <div class="physics-note">Six coupled second-order ODEs (or 12 first-order). No analytic solution for general initial conditions.</div>
+      </div>
+
+      <div class="doc-item">
+        <div class="physics-label">Numerical Integration (This Simulation)</div>
+        <div class="physics-note">
+          • Velocity Verlet (kick–drift–kick): symplectic, 2nd-order and time-reversible<br>
+          • Adaptive timestep: h = min(hMax, c · r_min / v_rel) — steps shrink automatically during close encounters<br>
+          • Softening parameter ε keeps the force finite at the closest passes<br>
+          • Each preset ships the timestep/softening settings that verify it for t = 400 (<code>npm run verify</code>)<br>
+          • Every preset is centre-of-mass corrected at load<br>
+          • Speed scales the number of adaptive steps per frame, from 0.1× to 30×
+        </div>
+      </div>
+
+      <div class="doc-item">
+        <div class="physics-label">Conservation Laws</div>
+        <div class="physics-eq">
+          Energy: E = ½ Σ mᵢ vᵢ² - Σ G mᵢ mⱼ / rᵢⱼ = const<br>
+          Momentum: P = Σ mᵢ vᵢ = const<br>
+          Angular Momentum: L = Σ mᵢ rᵢ × vᵢ = const
+        </div>
+        <div class="physics-note">These 10 conserved quantities are the ONLY ones. The system is non-integrable — no additional hidden symmetries exist (Poincaré's theorem).</div>
+      </div>
+
+      <div class="doc-item">
+        <div class="physics-label">Chaos &amp; Lyapunov Exponents</div>
+        <div class="physics-note">
+          • Lyapunov exponent λ measures divergence rate of nearby trajectories<br>
+          • λ &gt; 0 → chaotic (exponential divergence)<br>
+          • λ = 0 → regular/quasi-periodic<br>
+          • Lyapunov time τ = 1/λ → predictability horizon<br>
+          • For three-body: τ ~ few orbital periods<br>
+          • "Butterfly effect": rounding errors grow exponentially → long-term prediction impossible
+        </div>
+      </div>
+
+      <div class="doc-item">
+        <div class="physics-label">Periodic Orbits &amp; Choreographies</div>
+        <div class="physics-note">
+          • Periodic orbits satisfy: r(t) = r(t + T) for all bodies<br>
+          • Choreographies: all bodies trace the same curve with phase shift<br>
+          • Found by: variational methods, Newton-Raphson root-finding in initial-condition space<br>
+          • ~13 families known (Šuvakov &amp; Dmitrašinović 2013), initial conditions published to 15 digits<br>
+          • Many more likely exist — search is computationally expensive<br>
+          • Symmetry reduction reduces dimensionality (time-reversal, rotational symmetry)
+        </div>
+      </div>
+
+      <div class="doc-item">
+        <div class="physics-label">Applications</div>
+        <div class="physics-note">
+          • Astrophysics: triple star systems, planetary dynamics, galactic nuclei<br>
+          • Exoplanets: stability of multi-planet systems, Trojan asteroids<br>
+          • Gravitational waves: three-body mergers in LIGO/Virgo<br>
+          • Cosmology: dark matter halo dynamics<br>
+          • Molecular dynamics: three-body scattering in chemical reactions<br>
+          • Spacecraft: gravity-assist trajectories, parking orbits at Lagrange points<br>
+          • Mathematics: proof of chaos, topology of phase space, Arnold diffusion
+        </div>
+      </div>
+    </section>
+
+    <footer class="doc-footer">
+      <a href="index.html">&larr; Back to the simulator</a>
+    </footer>
+  </main>
+
+  <script type="module" src="learn.js"></script>
+</body>
+</html>
