@@ -248,6 +248,8 @@ function animate() {
 }
 animate();
 
+window.__APP_READY = true;
+
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();

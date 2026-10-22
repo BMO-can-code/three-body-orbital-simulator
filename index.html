@@ -10,6 +10,13 @@
 <body>
   <div id="container"></div>
 
+  <div id="boot-error" hidden>
+    <div class="boot-card">
+      <div class="boot-title">Three-Body Problem</div>
+      <div class="boot-msg"></div>
+    </div>
+  </div>
+
   <div id="ui">
     <div class="title">Three-Body Problem <span style="font-size:9px;padding:2px 8px;border:1px solid rgba(255,255,255,.2);border-radius:3px;color:#34d399;text-transform:uppercase;letter-spacing:1px;margin-left:8px">Made by Mayank</span></div>
 
@@ -281,6 +288,35 @@
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       });
     });
+  </script>
+  <script>
+    (function () {
+      var overlay = document.getElementById('boot-error');
+      function show(html) {
+        overlay.querySelector('.boot-msg').innerHTML = html;
+        overlay.hidden = false;
+      }
+      if (location.protocol === 'file:') {
+        show(
+          '<strong>This page needs a local server.</strong><br><br>' +
+          'Browsers block JavaScript modules on <code>file://</code>, so the simulation ' +
+          'cannot start when <code>index.html</code> is opened by double-clicking it.<br><br>' +
+          'On macOS, double-click <code>start.command</code>.<br>' +
+          'Or run <code>python3 -m http.server 8000</code> in this folder, ' +
+          'then open <code>http://localhost:8000</code>.'
+        );
+        return;
+      }
+      setTimeout(function () {
+        if (window.__APP_READY) return;
+        show(
+          '<strong>The simulation did not start.</strong><br><br>' +
+          'Open the browser console for the error. If it mentions a MIME type, ' +
+          'serve this folder with <code>python3 -m http.server 8000</code> ' +
+          'instead of a file viewer.'
+        );
+      }, 3000);
+    })();
   </script>
 </body>
 </html>

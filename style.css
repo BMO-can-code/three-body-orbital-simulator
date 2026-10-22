@@ -315,3 +315,44 @@ input[type="checkbox"] {
     display: none;
   }
 }
+
+#boot-error {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #0a0a1a;
+}
+
+#boot-error[hidden] { display: none; }
+
+.boot-card {
+  max-width: 520px;
+  padding: 24px 28px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 12px;
+  background: rgba(18,18,34,.96);
+  color: #ececf5;
+  font-size: 13px;
+  line-height: 1.7;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+}
+
+.boot-title {
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  color: #ff6b6b;
+}
+
+.boot-card code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.09);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}

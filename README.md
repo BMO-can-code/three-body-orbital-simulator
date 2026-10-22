@@ -43,11 +43,16 @@ Most three-body demos ship presets copy-pasted from a paper's summary table. Tho
 
 ## Running locally
 
-No build step; it's plain ES modules.
+No build step; it's plain ES modules — but it **must be served over HTTP**.
+Opening `index.html` directly (double-clicking it) will not work: browsers block
+JavaScript modules on `file://`.
+
+On macOS, double-click **`start.command`** — it starts a server and opens the page.
+
+Or from a terminal:
 
 ```bash
-# from the project directory
-npm run dev          # serves http://localhost:3000
+npm run dev          # serves http://localhost:8000
 ```
 
 Or with any static server:
