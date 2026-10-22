@@ -134,6 +134,9 @@ function loadPreset(key) {
   }
 
   document.getElementById('presetSelect').value = key;
+  document.querySelectorAll('.orbit-item').forEach((el) => {
+    el.classList.toggle('active-orbit', el.dataset.key === key);
+  });
 }
 
 function resetSimulation() {
@@ -198,7 +201,36 @@ function populatePresetSelect() {
   }
 }
 
+function buildGallery() {
+  const gallery = document.getElementById('orbitGallery');
+  for (const group of GROUP_ORDER) {
+    const section = document.createElement('div');
+    section.className = 'orbit-section';
+    section.textContent = group;
+    gallery.appendChild(section);
+    for (const p of PRESETS) {
+      if (p.group !== group) continue;
+      const item = document.createElement('div');
+      item.className = 'orbit-item';
+      item.dataset.key = p.key;
+      const name = document.createElement('div');
+      name.className = 'orbit-name';
+      name.textContent = p.name;
+      const desc = document.createElement('div');
+      desc.className = 'orbit-desc';
+      desc.textContent = p.desc || '';
+      item.append(name, desc);
+      item.addEventListener('click', () => {
+        loadPreset(p.key);
+        document.querySelector('[data-tab="simulation"]').click();
+      });
+      gallery.appendChild(item);
+    }
+  }
+}
+
 populatePresetSelect();
+buildGallery();
 
 document.getElementById('presetSelect').addEventListener('change', (e) => {
   loadPreset(e.target.value);
