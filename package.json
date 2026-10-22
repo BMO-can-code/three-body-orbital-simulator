@@ -8,7 +8,8 @@
   "scripts": {
     "verify": "node verify-presets.mjs",
     "dev": "python3 -m http.server 8000",
-    "start": "python3 -m http.server 8000"
+    "start": "python3 -m http.server 8000",
+    "deploy": "vercel --prod"
   },
   "keywords": [
     "three-body-problem",

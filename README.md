@@ -4,7 +4,7 @@ An interactive, fully 3-D simulator of the gravitational three-body problem — 
 
 ![Three-Body Problem Simulator](screenshot.png)
 
-**Live demo:** https://bmo-can-code.github.io/three-body-orbital-simulator/
+**Live demo:** https://three-body-orbital-simulator.vercel.app/ **Mirror:** https://bmo-can-code.github.io/three-body-orbital-simulator/
 
 ---
 
@@ -95,6 +95,16 @@ start.command         # macOS double-click launcher for a local server
 ```
 
 `physics.js` and `presets.js` are imported by **both** the browser app and Node, so what you see on screen is exactly what is verified.
+
+## Deployment
+
+The site is completely static: no build step, no server, no database. It is deployed free of charge on Vercel's Hobby plan.
+
+```bash
+npm run deploy   # vercel --prod
+```
+
+`vercel.json` sends HTML with `Cache-Control: no-cache` and assets with `max-age=3600, must-revalidate`, so a deploy is visible immediately instead of sitting behind a stale browser cache. GitHub Pages keeps running as a mirror from the same commit.
 
 ## Physics notes
 
